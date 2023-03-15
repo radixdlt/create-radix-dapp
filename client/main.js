@@ -1,23 +1,46 @@
 import './style.css'
-import javascriptLogo from './javascript.svg'
-import { setupCounter } from './counter.js'
+import scryptoLogo from './scryptoLogo.png'
+import { RadixDappToolkit } from '@radixdlt/radix-dapp-toolkit'
+
 
 document.querySelector('#app').innerHTML = `
   <div>
     <a href="https://vitejs.dev" target="_blank">
       <img src="/vite.svg" class="logo" alt="Vite logo" />
     </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
+    <a href="https://docs-babylon.radixdlt.com/main/scrypto/introduction.html" target="_blank">
+      <img src="${scryptoLogo}" class="logo vanilla" alt="Scrypto logo" />
     </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
+    <h1>Hello Scrypto!</h1>  
     <p class="read-the-docs">
-      Click on the Vite logo to learn more
+      Click on the Scrypto logo to learn more
     </p>
+    <div class="card">
+      <radix-connect-button />
+    </ div>  
   </div>
 `
+const rdt = RadixDappToolkit(
+  {
+    dAppDefinitionAddress:
+      "account_tdx_22_1pz7vywgwz4fq6e4v3aeeu8huamq0ctmsmzltay07vzpqm82mp5",
+    dAppName: "Name of your dApp",
+  },
+  (requestData) => {
+    requestData({
+      accounts: { quantifier: "atLeast", quantity: 1 },
+    }).map(({ data: { accounts } }) => {
+      // set your application state
+    });
+  },
+  {
+    networkId: 11, // for betanet 01 for mainnet
+    onDisconnect: () => {
+      // clear your application state
+    },
+    onInit: ({ accounts }) => {
+      // set your initial application state
+    },
+  }
+);
 
-setupCounter(document.querySelector('#counter'))

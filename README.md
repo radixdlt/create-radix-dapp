@@ -24,6 +24,8 @@ Now you can run the commands below to start your frontend with a dev server
 
 #### Install the Radix dApp Toolkit
 
+In the client directory (or whatever you named your front end project in the vite command)
+
 `npm install @radixdlt/radix-dapp-toolkit`
 
 Add the `<radix-connect-button />` element in your HTML code and instantiate `RadixDappToolkit`.

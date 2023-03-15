@@ -10,5 +10,8 @@
   },
   "devDependencies": {
     "vite": "^4.1.0"
+  },
+  "dependencies": {
+    "@radixdlt/radix-dapp-toolkit": "^0.1.0"
   }
 }
