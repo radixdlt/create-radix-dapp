@@ -63,7 +63,7 @@ const rdt = RadixDappToolkit(
     });
   },
   {
-    networkId: 11, // for betanet 01 for mainnet
+    networkId: 11, // for betanet
     onDisconnect: () => {
       // clear your application state
     },

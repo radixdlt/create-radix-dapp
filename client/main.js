@@ -31,6 +31,7 @@ const rdt = RadixDappToolkit(
       accounts: { quantifier: "atLeast", quantity: 1 },
     }).map(({ data: { accounts } }) => {
       // set your application state
+      console.log("requestData accounts: ",accounts)
     });
   },
   {
@@ -40,6 +41,7 @@ const rdt = RadixDappToolkit(
     },
     onInit: ({ accounts }) => {
       // set your initial application state
+      console.log("onInit accounts: ",accounts)
     },
   }
 );
