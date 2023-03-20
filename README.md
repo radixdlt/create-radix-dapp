@@ -1,3 +1,26 @@
+## Using this template to scaffold a new project
+You will need to have degit installed globally, to do this run `npm install -g degit`
+For more info on degit you can check the project's github [here](https://github.com/Rich-Harris/degit)
+
+Once you have degit installed you can simply run `degit radixdlt/create-scrypto-dapp` to scaffold a new project.
+
+You may also pass a name argument if you would like a parent directory to be created such as `degit radixdlt/create-scrypto-dapp my-dapp`
+
+You should now have inside your project directory two folders client & scrypto.
+
+Within you project workspace directory to install dependencies and start the dev server:
+``` 
+cd client
+npm install
+npm run dev
+```
+
+From your project workspace directory navigate a terminal to the scrypto project and build the scrypto project:
+```
+cd scrypto
+scrypto build
+```
+
 > This Template Was Created By Following The Steps Outlined Below
 
 ## Generate a Vite client project for the frontend
