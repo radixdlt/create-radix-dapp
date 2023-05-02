@@ -1,246 +1,37 @@
 use scrypto::prelude::*;
 
 #[blueprint]
-mod radiswap_module {
-    struct Radiswap {
-        /// A vault containing pool reverses of reserves of token A.
-        vault_a: Vault,
-        /// A vault containing pool reverses of reserves of token B.
-        vault_b: Vault,
-        /// The token address of a token representing pool units in this pool
-        pool_units_resource_address: ResourceAddress,
-        /// A vault containing a badge which has the authority to mint `pool_units` 
-        /// tokens.
-        pool_units_minter_badge: Vault,
-        /// The amount of fees imposed by the pool on swaps where 0 <= fee <= 1.
-        fee: Decimal,
+mod hello {
+    struct Hello {
+        // Define what resources and data will be managed by Hello components
+        sample_vault: Vault,
     }
 
-    impl Radiswap {
-        /// Creates a new liquidity pool of the two tokens sent to the pool
-        pub fn instantiate_radiswap(
-            bucket_a: Bucket,
-            bucket_b: Bucket,
-            fee: Decimal,
-        ) -> (ComponentAddress, Bucket) {
-            // Ensure that none of the buckets are empty and that an appropriate 
-            // fee is set.
-            assert!(
-                !bucket_a.is_empty() && !bucket_b.is_empty(),
-                "You must pass in an initial supply of each token"
-            );
-            assert!(
-                fee >= dec!("0") && fee <= dec!("1"),
-                "Invalid fee in thousandths"
-            );
+    impl Hello {
+        // Implement the functions and methods which will manage those resources and data
 
-            // Create a badge which will be given the authority to mint the pool  
-            // unit tokens.
-            let pool_units_minter_badge: Bucket = ResourceBuilder::new_fungible()
-                .divisibility(DIVISIBILITY_NONE)
-                .metadata("name", "LP Token Mint Auth")
-                .mint_initial_supply(1);
+        // This is a function, and can be called directly on the blueprint once deployed
+        pub fn instantiate_hello() -> ComponentAddress {
+            // Create a new token called "HelloToken," with a fixed supply of 1000, and put that supply into a bucket
+            let my_bucket: Bucket = ResourceBuilder::new_fungible()
+                .metadata("name", "HelloToken")
+                .metadata("symbol", "HT")
+                .mint_initial_supply(1000);
 
-            // Create the pool units token along with the initial supply specified  
-            // by the user.
-            let pool_units: Bucket = ResourceBuilder::new_fungible()
-                .divisibility(DIVISIBILITY_MAXIMUM)
-                .metadata("name", "Pool Unit")
-                .metadata("symbol", "UNIT")
-                .mintable(
-                    rule!(require(pool_units_minter_badge.resource_address())),
-                    LOCKED,
-                )
-                .burnable(
-                    rule!(require(pool_units_minter_badge.resource_address())),
-                    LOCKED,
-                )
-                .mint_initial_supply(100);
-
-            // Create the Radiswap component and globalize it
-            let radiswap: ComponentAddress = Self {
-                vault_a: Vault::with_bucket(bucket_a),
-                vault_b: Vault::with_bucket(bucket_b),
-                pool_units_resource_address: pool_units.resource_address(),
-                pool_units_minter_badge: Vault::with_bucket(pool_units_minter_badge),
-                fee: fee,
+            // Instantiate a Hello component, populating its vault with our supply of 1000 HelloToken
+            Self {
+                sample_vault: Vault::with_bucket(my_bucket)
             }
-            .instantiate()
-            .globalize();
-
-            // Return the component address as well as the pool units tokens
-            (radiswap, pool_units)
+                .instantiate()
+                .globalize()
         }
 
-        /// Swaps token A for B, or vice versa.
-        pub fn swap(&mut self, input_tokens: Bucket) -> Bucket {
-            // Getting the vault corresponding to the input tokens and the vault 
-            // corresponding to the output tokens based on what the input is.
-            let (input_tokens_vault, output_tokens_vault): (&mut Vault, &mut Vault) =
-                if input_tokens.resource_address() == 
-                self.vault_a.resource_address() {
-                    (&mut self.vault_a, &mut self.vault_b)
-                } else if input_tokens.resource_address() == 
-                self.vault_b.resource_address() {
-                    (&mut self.vault_b, &mut self.vault_a)
-                } else {
-                    panic!(
-                    "The given input tokens do not belong to this liquidity pool"
-                    )
-                };
-
-            // Calculate the output amount of tokens based on the input amount 
-            // and the pool fees
-            let output_amount: Decimal = (output_tokens_vault.amount()
-                * (dec!("1") - self.fee)
-                * input_tokens.amount())
-                / (input_tokens_vault.amount() + input_tokens.amount() 
-                * (dec!("1") - self.fee));
-
-            // Perform the swapping operation
-            input_tokens_vault.put(input_tokens);
-            output_tokens_vault.take(output_amount)
+        // This is a method, because it needs a reference to self.  Methods can only be called on components
+        pub fn free_token(&mut self) -> Bucket {
+            info!("My balance is: {} HelloToken. Now giving away a token!", self.sample_vault.amount());
+            // If the semi-colon is omitted on the last line, the last value seen is automatically returned
+            // In this case, a bucket containing 1 HelloToken is returned
+            self.sample_vault.take(1)
         }
-        
-        /// Adds liquidity to the liquidity pool
-        pub fn add_liquidity(
-            &mut self,
-            bucket_a: Bucket,
-            bucket_b: Bucket,
-        ) -> (Bucket, Bucket, Bucket) {
-            // Give the buckets the same names as the vaults
-            let (mut bucket_a, mut bucket_b): (Bucket, Bucket) = 
-            if bucket_a.resource_address()
-                == self.vault_a.resource_address()
-                && bucket_b.resource_address() == self.vault_b.resource_address()
-            {
-                (bucket_a, bucket_b)
-            } else if bucket_a.resource_address() == self.vault_b.resource_address()
-                && bucket_b.resource_address() == self.vault_a.resource_address()
-            {
-                (bucket_b, bucket_a)
-            } else {
-                panic!("One of the tokens does not belong to the pool!")
-            };
-
-            // Getting the values of `dm` and `dn` based on the sorted buckets
-            let dm: Decimal = bucket_a.amount();
-            let dn: Decimal = bucket_b.amount();
-
-            // Getting the values of m and n from the liquidity pool vaults
-            let m: Decimal = self.vault_a.amount();
-            let n: Decimal = self.vault_b.amount();
-
-            // Calculate the amount of tokens which will be added to each one of 
-            //the vaults
-            let (amount_a, amount_b): (Decimal, Decimal) =
-                if ((m == Decimal::zero()) | (n == Decimal::zero())) 
-                    | ((m / n) == (dm / dn)) 
-                {
-                    // Case 1
-                    (dm, dn)
-                } else if (m / n) < (dm / dn) {
-                    // Case 2
-                    (dn * m / n, dn)
-                } else {
-                    // Case 3
-                    (dm, dm * n / m)
-                };
-
-            // Depositing the amount of tokens calculated into the liquidity pool
-            self.vault_a.put(bucket_a.take(amount_a));
-            self.vault_b.put(bucket_b.take(amount_b));
-
-            // Mint pool units tokens to the liquidity provider
-            let pool_units_manager: ResourceManager =
-                borrow_resource_manager!(self.pool_units_resource_address);
-            let pool_units_amount: Decimal =
-                if pool_units_manager.total_supply() == Decimal::zero() {
-                    dec!("100.00")
-                } else {
-                    amount_a * pool_units_manager.total_supply() / m
-                };
-            let pool_units: Bucket = self
-                .pool_units_minter_badge
-                .authorize(|| pool_units_manager.mint(pool_units_amount));
-
-            // Return the remaining tokens to the caller as well as the pool units 
-            // tokens
-            (bucket_a, bucket_b, pool_units)
-        }
-
-        /// Removes the amount of funds from the pool corresponding to the pool units.
-        pub fn remove_liquidity(&mut self, pool_units: Bucket) -> (Bucket, Bucket) {
-            assert!(
-                pool_units.resource_address() == self.pool_units_resource_address,
-                "Wrong token type passed in"
-            );
-
-            // Get the resource manager of the lp tokens
-            let pool_units_resource_manager: ResourceManager =
-                borrow_resource_manager!(self.pool_units_resource_address);
-
-            // Calculate the share based on the input LP tokens.
-            let share = pool_units.amount() / 
-                pool_units_resource_manager.total_supply();
-
-            // Burn the LP tokens received
-            self.pool_units_minter_badge.authorize(|| {
-                pool_units.burn();
-            });
-
-            // Return the withdrawn tokens
-            (
-                self.vault_a.take(self.vault_a.amount() * share),
-                self.vault_b.take(self.vault_b.amount() * share),
-            )
-        }
-
-        pub fn get_liquidity(&self) -> (Decimal, Decimal) {
-            let vault_a_amount: Decimal = self.vault_a.amount();
-            let vault_b_amount: Decimal = self.vault_b.amount();
-
-            (vault_a_amount, vault_b_amount)
-        }
-
-        pub fn get_token_pair(&self) -> (ResourceAddress, ResourceAddress) {
-            let vault_a_address: ResourceAddress = self.vault_a.resource_address();
-            let vault_b_address: ResourceAddress = self.vault_b.resource_address();
-
-            (vault_a_address, vault_b_address)
-        }
-
-        pub fn get_token_pair_metadata(&self) -> (String, String) {
-            let resource_manager_a = borrow_resource_manager!(self.vault_a.resource_address());
-            let metadata_a = resource_manager_a.metadata();
-            let token_a_name = metadata_a.get_string("name").unwrap_or_else(|_| "unknown".to_string());
-        
-            let resource_manager_b = borrow_resource_manager!(self.vault_b.resource_address());
-            let metadata_b = resource_manager_b.metadata();
-            let token_b_name = metadata_b.get_string("name").unwrap_or_else(|_| "unknown".to_string());
-        
-            (token_a_name, token_b_name)
-        }
-
-        pub fn get_total_lp(&self) -> Decimal {
-            let resource_manager = borrow_resource_manager!(self.pool_units_resource_address);
-
-            let lp_amount = resource_manager.total_supply();
-
-            return lp_amount
-        }
-
-        pub fn get_resource_type(&self) -> (ResourceType, ResourceType) {
-            let resource_manager_a = borrow_resource_manager!(self.vault_a.resource_address());
-
-            let resource_type_a = resource_manager_a.resource_type();
-
-            let resource_manager_b = borrow_resource_manager!(self.vault_b.resource_address());
-
-            let resource_type_b = resource_manager_b.resource_type();
-
-            (resource_type_a, resource_type_b)
-        }
-
     }
 }
