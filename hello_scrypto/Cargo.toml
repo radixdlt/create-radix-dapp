@@ -1,5 +1,5 @@
 [package]
-name = "hello"
+name = "hello_scrypto"
 version = "1.0.0"
 edition = "2021"
 resolver = "2"
@@ -14,7 +14,7 @@ radix-engine = { git = "https://github.com/radixdlt/radixdlt-scrypto", tag = "v1
 scrypto-unit = { git = "https://github.com/radixdlt/radixdlt-scrypto", tag = "v1.0.0" }
 scrypto-test = { git = "https://github.com/radixdlt/radixdlt-scrypto", tag = "v1.0.0" }
 radix-engine-interface = { git = "https://github.com/radixdlt/radixdlt-scrypto", tag = "v1.0.0" }
-hello = { path = ".", features = ["test"] }
+hello_scrypto = { path = ".", features = ["test"] }
 
 [profile.release]
 opt-level = 'z'        # Optimize for size.

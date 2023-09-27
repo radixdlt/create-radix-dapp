@@ -3,7 +3,7 @@ use scrypto::this_package;
 use scrypto_test::prelude::*;
 use scrypto_unit::*;
 
-use hello::test_bindings::*;
+use hello_scrypto::test_bindings::*;
 
 #[test]
 fn test_hello() {

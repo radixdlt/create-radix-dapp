@@ -70,41 +70,34 @@ Add the `<radix-connect-button />` element in your HTML code and instantiate `Ra
 In your javascript instantiate `RadixDappToolkit`
 
 ```javascript
-import { RadixDappToolkit } from "@radixdlt/radix-dapp-toolkit";
+// You can create a dApp definition in the dev console at https://stokenet-console.radixdlt.com/dapp-metadata 
+// then use that account for your dAppId
+const dAppId = 'account_tdx_2_12yea7979c8e87zwsnx2pu53g67qruemy7ur2vsg8445l3fwgxly78q'
+// Instantiate DappToolkit
+const rdt = RadixDappToolkit({
+  dAppDefinitionAddress: dAppId,
+  networkId: RadixNetwork.Stokenet, // network ID 2 is for the stokenet test network, network ID 1 is for mainnet
+  applicationName: 'Hello Scrypto dApp',
+  applicationVersion: '1.0.0',
+})
+console.log("dApp Toolkit: ", rdt)
 
-const rdt = RadixDappToolkit(
-  {
-    dAppDefinitionAddress:
-      "account_tdx_22_1pz7vywgwz4fq6e4v3aeeu8huamq0ctmsmzltay07vzpqm82mp5",
-    dAppName: "Name of your dApp",
-  },
-  (requestData) => {
-    requestData({
-      accounts: { quantifier: "atLeast", quantity: 1 },
-    }).map(({ data: { accounts } }) => {
-      // set your application state
-    });
-  },
-  {
-    networkId: 11, // for betanet
-    onDisconnect: () => {
-      // clear your application state
-    },
-    onInit: ({ accounts }) => {
-      // set your initial application state
-    },
-  }
-);
+// ************ Fetch the user's account address ************
+rdt.walletApi.setRequestData(DataRequestBuilder.accounts().atLeast(1))
+// Subscribe to updates to the user's shared wallet data
+rdt.walletApi.walletData$.subscribe((walletData) => {
+  console.log("subscription wallet data: ", walletData)
+})
 ```
 
 ## Generate a scrypto package
 
-`scrypto new-package scrypto`
+`scrypto new-package hello_scrypto`
 
 > You can name your package whatever you like I have chosen to pass scrypto which will result in a folder named "scrypto" to be created at the root of my workspace folder.
 
-You should now have inside your project directory two folders client & scrypto.
+You should now have inside your project directory two folders client & hello_scrypto.
 
-`cd scrypto` then run `scrypto build` this will build out your blueprint package
+`cd hello_scrypto` then run `scrypto build` this will build out your blueprint package
 
 `cd client` then run `npm i` to install dependencies `npm run dev` to start the development server.
