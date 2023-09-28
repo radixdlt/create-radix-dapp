@@ -1,6 +1,6 @@
 import './style.css'
 import scryptoLogo from './scryptoLogo.png'
-import { RadixDappToolkit } from '@radixdlt/radix-dapp-toolkit'
+import { RadixDappToolkit, DataRequestBuilder, RadixNetwork } from '@radixdlt/radix-dapp-toolkit'
 
 
 document.querySelector('#app').innerHTML = `
@@ -8,7 +8,7 @@ document.querySelector('#app').innerHTML = `
     <a href="https://vitejs.dev" target="_blank">
       <img src="/vite.svg" class="logo" alt="Vite logo" />
     </a>
-    <a href="https://docs-babylon.radixdlt.com/main/scrypto/introduction.html" target="_blank">
+    <a href="https://docs.radixdlt.com" target="_blank">
       <img src="${scryptoLogo}" class="logo vanilla" alt="Scrypto logo" />
     </a>
     <h1>Hello Scrypto!</h1>  
@@ -20,29 +20,22 @@ document.querySelector('#app').innerHTML = `
     </ div>  
   </div>
 `
-const rdt = RadixDappToolkit(
-  {
-    dAppDefinitionAddress:
-      "account_tdx_22_1pz7vywgwz4fq6e4v3aeeu8huamq0ctmsmzltay07vzpqm82mp5",
-    dAppName: "Name of your dApp",
-  },
-  (requestData) => {
-    requestData({
-      accounts: { quantifier: "atLeast", quantity: 1 },
-    }).map(({ data: { accounts } }) => {
-      // set your application state
-      console.log("requestData accounts: ",accounts)
-    });
-  },
-  {
-    networkId: 11, // for betanet 01 for mainnet
-    onDisconnect: () => {
-      // clear your application state
-    },
-    onInit: ({ accounts }) => {
-      // set your initial application state
-      console.log("onInit accounts: ",accounts)
-    },
-  }
-);
 
+// You can create a dApp definition in the dev console at https://stokenet-console.radixdlt.com/dapp-metadata 
+// then use that account for your dAppId
+const dAppId = 'account_tdx_2_12yea7979c8e87zwsnx2pu53g67qruemy7ur2vsg8445l3fwgxly78q'
+// Instantiate DappToolkit
+const rdt = RadixDappToolkit({
+  dAppDefinitionAddress: dAppId,
+  networkId: RadixNetwork.Stokenet, // network ID 2 is for the stokenet test network, network ID 1 is for mainnet
+  applicationName: 'Hello Scrypto dApp',
+  applicationVersion: '1.0.0',
+})
+console.log("dApp Toolkit: ", rdt)
+
+// ************ Fetch the user's account address ************
+rdt.walletApi.setRequestData(DataRequestBuilder.accounts().atLeast(1))
+// Subscribe to updates to the user's shared wallet data
+rdt.walletApi.walletData$.subscribe((walletData) => {
+  console.log("subscription wallet data: ", walletData)
+})
