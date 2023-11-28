@@ -1,0 +1,22 @@
+{
+  "name": "create-radix-dapp",
+  "version": "0.0.1",
+  "description": "A new project scaffolding tool for quickly bootstrapping a new Radix dApp project.",
+  "main": "bin/index.js",
+  "bin": {
+    "create-radix-dapp": "bin/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/radixdlt/create-radix-dapp.git"
+  },
+  "author": "Bryan Sharpley",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/radixdlt/create-radix-dapp/issues"
+  },
+  "homepage": "https://github.com/radixdlt/create-radix-dapp#readme"
+}
