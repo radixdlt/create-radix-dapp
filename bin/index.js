@@ -7,9 +7,11 @@ exec(cmd, (error, stdout, stderr) => {
         console.log(`error: ${error.message}`);
         return;
     }
+    // stdout and stderr are both outputs of the child process in this case so the name is confusing
+    // as this logs a success message and hence is not an error and should not return
     if (stderr) {
         console.log(`stderr: ${stderr}`);
-        return;
+        //     return;
     }
     if (stdout) {
         console.log(`stdout: "${stdout}`);
