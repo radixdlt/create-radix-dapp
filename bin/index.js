@@ -1,25 +1,64 @@
-#! /usr/bin/env node
-const { exec } = require('child_process');
-let cmd = `npx degit radixdlt/create-radix-dapp/templates/vanilla_js ${process.argv[2]}`;
-console.log("Building your dapp...");
-exec(cmd, (error, stdout, stderr) => {
-    if (error) {
-        console.log(`error: ${error.message}`);
-        return;
+#!/usr/bin/env node
+
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
+import inquirer from 'inquirer';
+import degit from 'degit';
+import { exec } from 'child_process';
+
+// Parse command line arguments
+const argv = yargs(hideBin(process.argv))
+    .usage("Usage: $0 <name>")
+    .demandCommand(1)
+    .argv;
+
+const projectName = argv._[0];
+const basePath = "radixdlt/create-radix-dapp/templates"
+
+// Template options
+const templates = [
+    { name: "Vanilla JS", value: "/vanilla_js" },
+    { name: "React", value: "/react" },
+    // Add more templates here
+];
+
+// Ask the user to select a template
+inquirer.prompt([
+    {
+        type: 'list',
+        name: 'template',
+        message: 'Which template would you like to use?',
+        choices: templates,
     }
-    // stdout and stderr are both outputs of the child process in this case so the name is confusing
-    // as this logs a success message and hence is not an error and should not return
-    if (stderr) {
-        console.log(`stderr: ${stderr}`);
-        //     return;
-    }
-    if (stdout) {
-        console.log(`stdout: "${stdout}`);
-    }
-    console.log("Dapp built!");
-    console.log("You can now run the commands below to start your new dApp:")
-    console.info(`cd ${process.argv[2]}/client`)
-    console.info("npm install")
-    console.info("npm run dev")
-    console.info("to run the dev server")
+]).then(answers => {
+    // Use degit to clone the selected template
+    const emitter = degit(`${basePath}${answers.template}`, {
+        cache: true,
+        force: true,
+        verbose: true,
+    });
+    emitter.on('info', info => {
+        console.log(info.message);
+    });
+    emitter.clone(projectName).then(() => {
+        console.log('Template created successfully.');
+        console.log('Installing dependencies...');
+
+        exec(`cd ${projectName}/client && npm install`, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error installing dependencies: ${error.message}`);
+                return;
+            }
+
+            if (stderr) {
+                console.error(`Error installing dependencies: ${stderr}`);
+                return;
+            }
+
+            console.log('Dependencies installed successfully.');
+            console.log(`To start the app, run: cd ${projectName}/client && npm run dev`);
+        });
+    }).catch(err => {
+        console.error('Failed to clone template:', err);
+    });
 });

@@ -1,6 +1,7 @@
 {
   "name": "create-radix-dapp",
   "version": "0.0.1",
+  "type": "module",
   "description": "A new project scaffolding tool for quickly bootstrapping a new Radix dApp project.",
   "main": "bin/index.js",
   "bin": {
@@ -18,5 +19,10 @@
   "bugs": {
     "url": "https://github.com/radixdlt/create-radix-dapp/issues"
   },
-  "homepage": "https://github.com/radixdlt/create-radix-dapp#readme"
+  "homepage": "https://github.com/radixdlt/create-radix-dapp#readme",
+  "dependencies": {
+    "degit": "^2.8.4",
+    "inquirer": "^9.2.12",
+    "yargs": "^17.7.2"
+  }
 }
