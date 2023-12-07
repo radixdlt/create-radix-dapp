@@ -25,7 +25,7 @@ const templates = [
     // Add more templates here
 ];
 
-// Ask the user to select enter aproject name and select a template
+// Ask the user to enter a project name and select a template. The project name is used as the folder name for the new project.
 inquirer.prompt([
     {
         type: 'input',
