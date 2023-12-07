@@ -1,29 +1,44 @@
 #!/usr/bin/env node
 
-import yargs from 'yargs';
-import { hideBin } from 'yargs/helpers';
+/**
+ * This script is used to create a new Radix Dapp project by cloning a template.
+ * It prompts the user to enter a project name and select a template, then uses degit to clone the selected template.
+ * After cloning, it installs the necessary dependencies and provides instructions on how to start the app.
+ */
+
+// Import dependencies
 import inquirer from 'inquirer';
 import degit from 'degit';
 import { exec } from 'child_process';
 
-// Parse command line arguments
-const argv = yargs(hideBin(process.argv))
-    .usage("Usage: $0 <name>")
-    .demandCommand(1)
-    .argv;
-
-const projectName = argv._[0];
+// Get the template path
 const basePath = "radixdlt/create-radix-dapp/templates"
 
 // Template options
+/**
+ * Array of templates available for selection.
+ * @type {Array<{name: string, value: string}>}
+ */
 const templates = [
     { name: "Vanilla JS", value: "/vanilla_js" },
     { name: "React", value: "/react" },
     // Add more templates here
 ];
 
-// Ask the user to select a template
+// Ask the user to select enter aproject name and select a template
 inquirer.prompt([
+    {
+        type: 'input',
+        name: 'projectName',
+        message: 'What is the name of your project?',
+        validate: function (value) {
+            if (value.length) {
+                return true;
+            } else {
+                return 'Please enter a valid project name.';
+            }
+        }
+    },
     {
         type: 'list',
         name: 'template',
@@ -32,19 +47,23 @@ inquirer.prompt([
     }
 ]).then(answers => {
     // Use degit to clone the selected template
+    /**
+     * The emitter object used for cloning the template.
+     * @type {degit.Emitter}
+     */
     const emitter = degit(`${basePath}${answers.template}`, {
         cache: true,
         force: true,
         verbose: true,
     });
     emitter.on('info', info => {
-        console.log(info.message);
+        // console.log(info.message);
     });
-    emitter.clone(projectName).then(() => {
-        console.log('Template created successfully.');
+    emitter.clone(answers.projectName).then(() => {
+        console.log('\x1b[32mTemplate created successfully.\x1b[0m'); // Color the text green
         console.log('Installing dependencies...');
 
-        exec(`cd ${projectName}/client && npm install`, (error, stdout, stderr) => {
+        exec(`cd ${answers.projectName}/client && npm install`, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error installing dependencies: ${error.message}`);
                 return;
@@ -55,8 +74,8 @@ inquirer.prompt([
                 return;
             }
 
-            console.log('Dependencies installed successfully.');
-            console.log(`To start the app, run: cd ${projectName}/client && npm run dev`);
+            console.log('\x1b[32mDependencies installed successfully.\x1b[0m'); // Color the text green
+            console.log(`\x1b[33mTo start the app, run:\x1b[0m cd ${answers.projectName}/client && npm run dev`); // Color the text yellow
         });
     }).catch(err => {
         console.error('Failed to clone template:', err);
