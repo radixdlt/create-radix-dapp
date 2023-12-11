@@ -12,7 +12,7 @@ import degit from 'degit';
 import { exec } from 'child_process';
 
 // Get the template path
-const basePath = "https://github.com/radixdlt/create-radix-dapp/templates"
+const basePath = "radixdlt/create-radix-dapp/templates"
 
 // Template options
 /**
@@ -51,6 +51,7 @@ inquirer.prompt([
      * The emitter object used for cloning the template.
      * @type {degit.Emitter}
      */
+    console.log(`Cloning template from ${basePath}${answers.template}...`)
     const emitter = degit(`${basePath}${answers.template}`, {
         cache: true,
         force: true,
