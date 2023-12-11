@@ -12,7 +12,7 @@ import degit from 'degit';
 import { exec } from 'child_process';
 
 // Get the template path
-const basePath = "radixdlt/create-radix-dapp/templates"
+const basePath = "https://github.com/radixdlt/create-radix-dapp/templates"
 
 // Template options
 /**
