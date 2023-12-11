@@ -57,7 +57,7 @@ inquirer.prompt([
         verbose: true,
     });
     emitter.on('info', info => {
-        // console.log(info.message);
+        console.log(info.message);
     });
     emitter.clone(answers.projectName).then(() => {
         console.log('\x1b[32mTemplate created successfully.\x1b[0m'); // Color the text green
