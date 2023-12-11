@@ -1,25 +1,83 @@
-#! /usr/bin/env node
-const { exec } = require('child_process');
-let cmd = `npx degit radixdlt/create-radix-dapp/templates/vanilla_js ${process.argv[2]}`;
-console.log("Building your dapp...");
-exec(cmd, (error, stdout, stderr) => {
-    if (error) {
-        console.log(`error: ${error.message}`);
-        return;
+#!/usr/bin/env node
+
+/**
+ * This script is used to create a new Radix Dapp project by cloning a template.
+ * It prompts the user to enter a project name and select a template, then uses degit to clone the selected template.
+ * After cloning, it installs the necessary dependencies and provides instructions on how to start the app.
+ */
+
+// Import dependencies
+import inquirer from 'inquirer';
+import degit from 'degit';
+import { exec } from 'child_process';
+
+// Get the template path
+const basePath = "radixdlt/create-radix-dapp/templates"
+
+// Template options
+/**
+ * Array of templates available for selection.
+ * @type {Array<{name: string, value: string}>}
+ */
+const templates = [
+    { name: "Vanilla JS", value: "/vanilla_js" },
+    { name: "React", value: "/react" },
+    // Add more templates here
+];
+
+// Ask the user to enter a project name and select a template. The project name is used as the folder name for the new project.
+inquirer.prompt([
+    {
+        type: 'input',
+        name: 'projectName',
+        message: 'What is the name of your project?',
+        validate: function (value) {
+            if (value.length) {
+                return true;
+            } else {
+                return 'Please enter a valid project name.';
+            }
+        }
+    },
+    {
+        type: 'list',
+        name: 'template',
+        message: 'Which template would you like to use?',
+        choices: templates,
     }
-    // stdout and stderr are both outputs of the child process in this case so the name is confusing
-    // as this logs a success message and hence is not an error and should not return
-    if (stderr) {
-        console.log(`stderr: ${stderr}`);
-        //     return;
-    }
-    if (stdout) {
-        console.log(`stdout: "${stdout}`);
-    }
-    console.log("Dapp built!");
-    console.log("You can now run the commands below to start your new dApp:")
-    console.info(`cd ${process.argv[2]}/client`)
-    console.info("npm install")
-    console.info("npm run dev")
-    console.info("to run the dev server")
+]).then(answers => {
+    // Use degit to clone the selected template
+    /**
+     * The emitter object used for cloning the template.
+     * @type {degit.Emitter}
+     */
+    const emitter = degit(`${basePath}${answers.template}`, {
+        cache: true,
+        force: true,
+        verbose: true,
+    });
+    emitter.on('info', info => {
+        // console.log(info.message);
+    });
+    emitter.clone(answers.projectName).then(() => {
+        console.log('\x1b[32mTemplate created successfully.\x1b[0m'); // Color the text green
+        console.log('Installing dependencies...');
+
+        exec(`cd ${answers.projectName}/client && npm install`, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error installing dependencies: ${error.message}`);
+                return;
+            }
+
+            if (stderr) {
+                console.error(`Error installing dependencies: ${stderr}`);
+                return;
+            }
+
+            console.log('\x1b[32mDependencies installed successfully.\x1b[0m'); // Color the text green
+            console.log(`\x1b[33mTo start the app, run:\x1b[0m cd ${answers.projectName}/client && npm run dev`); // Color the text yellow
+        });
+    }).catch(err => {
+        console.error('Failed to clone template:', err);
+    });
 });
