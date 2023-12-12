@@ -53,7 +53,7 @@ inquirer.prompt([
      */
     console.log(`Cloning template from ${basePath}${answers.template}...`)
     const emitter = degit(`${basePath}${answers.template}`, {
-        cache: true,
+        cache: false,
         force: true,
         verbose: true,
     });
