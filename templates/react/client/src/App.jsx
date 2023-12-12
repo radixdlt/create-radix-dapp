@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+import scryptoLogo from './assets/scryptoLogo.png'
 import viteLogo from '/vite.svg'
 import './App.css'
 
@@ -9,11 +9,11 @@ function App() {
   return (
     <>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
+        <a href="https://vitejs.dev" target="_blank" rel='noreferrer'>
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
+        <a href="https://docs.radixdlt.com" target="_blank" rel='noreferrer'>
+          <img src={scryptoLogo} className="logo" alt="Scrypto logo" />
         </a>
       </div>
       <h1>Vite + React</h1>
