@@ -12,7 +12,7 @@ import degit from 'degit';
 import { exec } from 'child_process';
 
 // Get the template path
-const basePath = "radixdlt/create-radix-dapp/templates"
+const basePath = "radixdlt/"
 
 // Template options
 /**
@@ -20,8 +20,8 @@ const basePath = "radixdlt/create-radix-dapp/templates"
  * @type {Array<{name: string, value: string}>}
  */
 const templates = [
-    { name: "Vanilla JS", value: "/vanilla_js" },
-    { name: "React", value: "/react" },
+    { name: "Vanilla JS", value: "create-radix-dapp/templates/vanilla_js" },
+    { name: "React", value: "create-radix-dapp/templates/react" },
     // Add more templates here
 ];
 
