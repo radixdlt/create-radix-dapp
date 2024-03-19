@@ -66,7 +66,7 @@ inquirer.prompt([
         console.log('\x1b[32mTemplate created successfully.\x1b[0m'); // Color the text green
         if (!answers.template.includes("gumball-club")) {
             console.log('Installing dependencies...');
-            exec(`cd ${answers.projectName}/client && npm install`, (error, stdout, stderr) => {
+            exec(`cd ${answers.projectName} && npm install`, (error, stdout, stderr) => {
                 if (error) {
                     console.error(`Error installing dependencies: ${error.message}`);
                     return;
