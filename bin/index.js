@@ -12,7 +12,7 @@ import degit from 'degit';
 import { exec } from 'child_process';
 
 // Get the template path
-const basePath = "radixdlt/create-radix-dapp/templates"
+const basePath = "radixdlt/"
 
 // Template options
 /**
@@ -20,8 +20,10 @@ const basePath = "radixdlt/create-radix-dapp/templates"
  * @type {Array<{name: string, value: string}>}
  */
 const templates = [
-    { name: "Vanilla JS", value: "/vanilla_js" },
-    { name: "React", value: "/react" },
+    { name: "Vanilla - JS", value: "official-examples/getting-started/vanilla-js-dapp" },
+    { name: "React - JS", value: "create-radix-dapp/templates/react" },
+    { name: "Fullstack Gumball Machine - JS", value: "official-examples/step-by-step/10-gumball-machine-front-end" },
+    { name: "Gumball Club - Next TS", value: "gumball-club" }
     // Add more templates here
 ];
 
@@ -62,22 +64,24 @@ inquirer.prompt([
     });
     emitter.clone(answers.projectName).then(() => {
         console.log('\x1b[32mTemplate created successfully.\x1b[0m'); // Color the text green
-        console.log('Installing dependencies...');
+        if (!answers.template.includes("gumball-club")) {
+            console.log('Installing dependencies...');
+            exec(`cd ${answers.projectName} && npm install`, (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`Error installing dependencies: ${error.message}`);
+                    return;
+                }
 
-        exec(`cd ${answers.projectName}/client && npm install`, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`Error installing dependencies: ${error.message}`);
-                return;
-            }
+                if (stderr) {
+                    console.error(`Error installing dependencies: ${stderr}`);
+                    return;
+                }
 
-            if (stderr) {
-                console.error(`Error installing dependencies: ${stderr}`);
-                return;
-            }
+                console.log('\x1b[32mDependencies installed successfully.\x1b[0m'); // Color the text green
+                console.log(`\x1b[33mTo start the app, run:\x1b[0m cd ${answers.projectName}/client && npm run dev`); // Color the text yellow
+            });
+        }
 
-            console.log('\x1b[32mDependencies installed successfully.\x1b[0m'); // Color the text green
-            console.log(`\x1b[33mTo start the app, run:\x1b[0m cd ${answers.projectName}/client && npm run dev`); // Color the text yellow
-        });
     }).catch(err => {
         console.error('Failed to clone template:', err);
     });
