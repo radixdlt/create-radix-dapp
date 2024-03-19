@@ -78,7 +78,7 @@ inquirer.prompt([
                 }
 
                 console.log('\x1b[32mDependencies installed successfully.\x1b[0m'); // Color the text green
-                console.log(`\x1b[33mTo start the app, run:\x1b[0m cd ${answers.projectName}/client && npm run dev`); // Color the text yellow
+                console.log(`\x1b[33mTo start the app, run:\x1b[0m cd ${answers.projectName} && npm run dev`); // Color the text yellow
             });
         }
 
