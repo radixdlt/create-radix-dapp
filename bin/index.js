@@ -17,13 +17,16 @@ const basePath = "radixdlt/"
 // Template options
 /**
  * Array of templates available for selection.
- * @type {Array<{name: string, value: string}>}
+ * @type {Array<{name: string, value: string, clientDir: string}>}
  */
 const templates = [
-    { name: "Vanilla - JS", value: "official-examples/getting-started/vanilla-js-dapp" },
-    { name: "React - JS", value: "create-radix-dapp/templates/react" },
-    { name: "Fullstack Gumball Machine - JS", value: "official-examples/step-by-step/10-gumball-machine-front-end" },
-    { name: "Gumball Club - Next TS", value: "gumball-club" }
+    { name: "Vanilla - JS", value: "official-examples/getting-started/vanilla-js-dapp", clientDir: "root-dir" },
+    { name: "React - JS", value: "official-examples/getting-started/react-js-dapp", clientDir: "root-dir" },
+    { name: "Svelte - JS", value: "official-examples/getting-started/svelte-js-dapp", clientDir: "root-dir" },
+    { name: "Svelte - TS", value: "official-examples/getting-started/svelte-ts-dapp", clientDir: "root-dir" },
+    { name: "Fullstack Gumball Machine - JS", value: "official-examples/step-by-step/10-gumball-machine-front-end", clientDir: "client-dir" },
+    { name: "Fullstack Radiswap JS", value: "official-examples/step-by-step/21-radiswap-dapp", clientDir: "client-dir" },
+    { name: "Gumball Club - Next TS", value: "gumball-club", clientDir: "gumball-club" }
     // Add more templates here
 ];
 
@@ -46,6 +49,16 @@ inquirer.prompt([
         name: 'template',
         message: 'Which template would you like to use?',
         choices: templates,
+        filter: function (value) {
+            // Find the selected template
+            const template = templates.find(t => t.value === value);
+
+            // Return an object that includes the template value and the clientDir
+            return {
+                value: template.value,
+                clientDir: template.clientDir
+            };
+        }
     }
 ]).then(answers => {
     // Use degit to clone the selected template
@@ -53,8 +66,9 @@ inquirer.prompt([
      * The emitter object used for cloning the template.
      * @type {degit.Emitter}
      */
-    console.log(`Cloning template from ${basePath}${answers.template}...`)
-    const emitter = degit(`${basePath}${answers.template}`, {
+    console.log("answers", answers)
+    console.log(`Cloning template from ${basePath}${answers.template.value}...`)
+    const emitter = degit(`${basePath}${answers.template.value}`, {
         cache: false,
         force: true,
         verbose: true,
@@ -64,7 +78,7 @@ inquirer.prompt([
     });
     emitter.clone(answers.projectName).then(() => {
         console.log('\x1b[32mTemplate created successfully.\x1b[0m'); // Color the text green
-        if (!answers.template.includes("gumball-club")) {
+        if (answers.template.clientDir === "root-dir") {
             console.log('Installing dependencies...');
             exec(`cd ${answers.projectName} && npm install`, (error, stdout, stderr) => {
                 if (error) {
@@ -76,9 +90,40 @@ inquirer.prompt([
                     console.error(`Error installing dependencies: ${stderr}`);
                     return;
                 }
-
                 console.log('\x1b[32mDependencies installed successfully.\x1b[0m'); // Color the text green
                 console.log(`\x1b[33mTo start the app, run:\x1b[0m cd ${answers.projectName} && npm run dev`); // Color the text yellow
+            });
+        }
+        if (answers.template.clientDir === "client-dir") {
+            console.log('Installing dependencies...');
+            exec(`cd ${answers.projectName}/client && npm install`, (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`Error installing dependencies: ${error.message}`);
+                    return;
+                }
+
+                if (stderr) {
+                    console.error(`Error installing dependencies: ${stderr}`);
+                    return;
+                }
+                console.log('\x1b[32mDependencies installed successfully.\x1b[0m'); // Color the text green
+                console.log(`\x1b[33mTo start the app, run:\x1b[0m cd ${answers.projectName}/client && npm run dev`); // Color the text yellow
+            });
+        }
+        if (answers.template.clientDir === "gumball-club") {
+            console.log('Installing dependencies...');
+            exec(`cd ${answers.projectName}/dapp && npm install`, (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`Error installing dependencies: ${error.message}`);
+                    return;
+                }
+
+                if (stderr) {
+                    console.error(`Error installing dependencies: ${stderr}`);
+                    return;
+                }
+                console.log('\x1b[32mDependencies installed successfully.\x1b[0m'); // Color the text green
+                console.log(`\x1b[33mTo start the app, run:\x1b[0m cd ${answers.projectName}/dapp && npm run dev`); // Color the text yellow
             });
         }
 

@@ -9,7 +9,7 @@ Once deployed to NPM there is no need to install the package globally, you can s
 `npx create-radix-dapp@latest` and follow the prompts to scaffold a new Radix dApp project.
 
 ## Contributing
-To create a new template create a new folder in the `templates` directory. The folder name will be the name of the template. The folder should contain a `template` folder which is named to represent the template it contains. Each template should contain the appropriate License. The template should also contain a `README.md` file explaining how to use the template.
+To create a new template for the create-radix-dapp package, add a new project to the official-examples repository in the getting-started directory. Add a new object to the templates array and ensure that the install step is correct for the new template.
 
 
 # License
