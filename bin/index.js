@@ -26,7 +26,6 @@ const templates = [
     { name: "Svelte - TS", value: "official-examples/getting-started/svelte-ts-dapp", clientDir: "root-dir" },
     { name: "Fullstack Gumball Machine - JS", value: "official-examples/step-by-step/10-gumball-machine-front-end", clientDir: "client-dir" },
     { name: "Fullstack Radiswap JS", value: "official-examples/step-by-step/21-radiswap-dapp", clientDir: "client-dir" },
-    { name: "Gumball Club - Next TS", value: "gumball-club", clientDir: "gumball-club" }
     // Add more templates here
 ];
 
@@ -108,22 +107,6 @@ inquirer.prompt([
                 }
                 console.log('\x1b[32mDependencies installed successfully.\x1b[0m'); // Color the text green
                 console.log(`\x1b[33mTo start the app, run:\x1b[0m cd ${answers.projectName}/client && npm run dev`); // Color the text yellow
-            });
-        }
-        if (answers.template.clientDir === "gumball-club") {
-            console.log('Installing dependencies...');
-            exec(`cd ${answers.projectName}/dapp && npm install`, (error, stdout, stderr) => {
-                if (error) {
-                    console.error(`Error installing dependencies: ${error.message}`);
-                    return;
-                }
-
-                if (stderr) {
-                    console.error(`Error installing dependencies: ${stderr}`);
-                    return;
-                }
-                console.log('\x1b[32mDependencies installed successfully.\x1b[0m'); // Color the text green
-                console.log(`\x1b[33mTo start the app, run:\x1b[0m cd ${answers.projectName}/dapp && npm run dev`); // Color the text yellow
             });
         }
 
