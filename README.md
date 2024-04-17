@@ -1,3 +1,6 @@
+## Getting Started
+This package is a CLI tool to scaffold a new Radix dApp project. It is intended to be used as an `npx` command to create a new project without the need to install the package globally. To scaffold a new project, run the following command in your terminal: `npx create-radix-dapp@latest`
+
 ## Testing Locally
 Clone this repository and run the following command to link the package to your local NPM registry:
 `npm link`
