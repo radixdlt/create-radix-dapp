@@ -1,5 +1,35 @@
+# create-radix-dapp
+A CLI tool to scaffold a new Radix dApp project. Choose from a selection of templates to get started with your new project.
+- Vanilla JS
+- React JS
+- Svelte JS
+- Svelte TS
+- Full Stack Gumball Machine JS
+- Full Stack Radiswap JS
+
 ## Getting Started
-This package is a CLI tool to scaffold a new Radix dApp project. It is intended to be used as an `npx` command to create a new project without the need to install the package globally. To scaffold a new project, run the following command in your terminal: `npx create-radix-dapp@latest`
+To scaffold a new project, run the following command in your terminal:
+
+```bash
+npx create-radix-dapp@latest
+```
+### Name your Project & Choose a Template
+![Choosing a Template](bin/assets/choose-template.png)
+
+### Creating Project & Installing Dependencies
+![Creating Project](bin/assets/build-install-deps.png)
+
+### Start the Development Server
+![Starting the Development Server](bin/assets/start-dev-server.png)
+
+### Open the Project in your Browser
+![Open the Project in your Browser](bin/assets/open-project.png)
+
+### Start Building your Radix dApp
+Check out README.md in your new project for more information on how to get started building your Radix dApp.
+
+## Contributing
+To create a new template for the create-radix-dapp package, add a new project to the official-examples repository in the getting-started directory. Add a new object to the templates array and ensure that the install step is correct for the new template.
 
 ## Testing Locally
 Clone this repository and run the following command to link the package to your local NPM registry:
@@ -11,8 +41,7 @@ You can then run the following command anywhere on your system to test the appli
 Once deployed to NPM there is no need to install the package globally, you can simply run:
 `npx create-radix-dapp@latest` and follow the prompts to scaffold a new Radix dApp project.
 
-## Contributing
-To create a new template for the create-radix-dapp package, add a new project to the official-examples repository in the getting-started directory. Add a new object to the templates array and ensure that the install step is correct for the new template.
+
 
 
 # License
