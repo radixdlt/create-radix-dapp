@@ -22,6 +22,7 @@ const basePath = "radixdlt/"
 const templates = [
     { name: "Vanilla - JS", value: "official-examples/getting-started/vanilla-js-dapp", clientDir: "root-dir" },
     { name: "React - JS", value: "official-examples/getting-started/react-js-dapp", clientDir: "root-dir" },
+    { name: "React - TS", value: "official-examples/getting-started/react-ts-dapp", clientDir: "root-dir" },
     { name: "Svelte - JS", value: "official-examples/getting-started/svelte-js-dapp", clientDir: "root-dir" },
     { name: "Svelte - TS", value: "official-examples/getting-started/svelte-ts-dapp", clientDir: "root-dir" },
     { name: "Fullstack Gumball Machine - JS", value: "official-examples/step-by-step/10-gumball-machine-front-end", clientDir: "client-dir" },
