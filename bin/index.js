@@ -116,13 +116,13 @@ inquirer
         console.log("Installing dependencies...");
         if (answers.template.clientDir === "root-dir") {
           exec(
-            `cd ${answers.projectName} && npm install`,
+            `cd ${answers.projectName} && npm install --loglevel=error`,
             postInstallCommands(answers)
           );
         }
         if (answers.template.clientDir === "client-dir") {
           exec(
-            `cd ${answers.projectName}/client && npm install`,
+            `cd ${answers.projectName}/client && npm install --loglevel=error`,
             postInstallCommands(answers)
           );
         }
